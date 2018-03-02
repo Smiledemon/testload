@@ -1,0 +1,294 @@
+syntax = "proto3";
+
+package com.xceder.CTP.messages;
+
+option optimize_for = SPEED;
+
+//消息响应
+enum CTPRespCode{
+    NONE = 0; //CTP:正确
+    INVALID_DATA_SYNC_STATUS = 1; //CTP:不在已同步状态
+    INCONSISTENT_INFORMATION = 2; //CTP:会话信息不一致
+    INVALID_LOGIN = 3; //CTP:不合法的登录
+    USER_NOT_ACTIVE = 4; //CTP:用户不活跃
+    DUPLICATE_LOGIN = 5; //CTP:重复的登录
+    NOT_LOGIN_YET = 6; //CTP:还没有登录
+    NOT_INITED = 7; //CTP:还没有初始化
+    FRONT_NOT_ACTIVE = 8; //CTP:前置不活跃
+    NO_PRIVILEGE = 9; //CTP:无此权限
+    CHANGE_OTHER_PASSWORD = 10; //CTP:修改别人的口令
+    USER_NOT_FOUND = 11; //CTP:找不到该用户
+    BROKER_NOT_FOUND = 12; //CTP:找不到该经纪公司
+    INVESTOR_NOT_FOUND = 13; //CTP:找不到投资者
+    OLD_PASSWORD_MISMATCH = 14; //CTP:原口令不匹配
+    BAD_FIELD = 15; //CTP:报单字段有误
+    INSTRUMENT_NOT_FOUND = 16; //CTP:找不到合约
+    INSTRUMENT_NOT_TRADING = 17; //CTP:合约不能交易
+    NOT_EXCHANGE_PARTICIPANT = 18; //CTP:经纪公司不是交易所的会员
+    INVESTOR_NOT_ACTIVE = 19; //CTP:投资者不活跃
+    NOT_EXCHANGE_CLIENT = 20; //CTP:投资者未在交易所开户
+    NO_VALID_TRADER_AVAILABLE = 21; //CTP:该交易席位未连接到交易所
+    DUPLICATE_ORDER_REF = 22; //CTP:报单错误：不允许重复报单
+    BAD_ORDER_ACTION_FIELD = 23; //CTP:错误的报单操作字段
+    DUPLICATE_ORDER_ACTION_REF = 24; //CTP:撤单已报送，不允许重复撤单
+    ORDER_NOT_FOUND = 25; //CTP:撤单找不到相应报单
+    INSUITABLE_ORDER_STATUS = 26; //CTP:报单已全成交或已撤销，不能再撤
+    UNSUPPORTED_FUNCTION = 27; //CTP:不支持的功能
+    NO_TRADING_RIGHT = 28; //CTP:没有报单交易权限
+    CLOSE_ONLY = 29; //CTP:只能平仓
+    OVER_CLOSE_POSITION = 30; //CTP:平仓量超过持仓量
+    INSUFFICIENT_MONEY = 31; //CTP:资金不足
+    DUPLICATE_PK = 32; //CTP:主键重复
+    CANNOT_FIND_PK = 33; //CTP:找不到主键
+    CAN_NOT_INACTIVE_BROKER = 34; //CTP:设置经纪公司不活跃状态失败
+    BROKER_SYNCHRONIZING = 35; //CTP:经纪公司正在同步
+    BROKER_SYNCHRONIZED = 36; //CTP:经纪公司已同步
+    SHORT_SELL = 37; //CTP:现货交易不能卖空
+    INVALID_SETTLEMENT_REF = 38; //CTP:不合法的结算引用
+    CFFEX_NETWORK_ERROR = 39; //CTP:交易所网络连接失败
+    CFFEX_OVER_REQUEST = 40; //CTP:交易所未处理请求超过许可数
+    CFFEX_OVER_REQUEST_PER_SECOND = 41; //CTP:交易所每秒发送请求数超过许可数
+    SETTLEMENT_INFO_NOT_CONFIRMED = 42; //CTP:结算结果未确认
+    DEPOSIT_NOT_FOUND = 43; //CTP:没有对应的入金记录
+    EXCHANG_TRADING = 44; //CTP:交易所已经进入连续交易状态
+    PARKEDORDER_NOT_FOUND = 45; //CTP:找不到预埋（撤单）单
+    PARKEDORDER_HASSENDED = 46; //CTP:预埋（撤单）单已经发送
+    PARKEDORDER_HASDELETE = 47; //CTP:预埋（撤单）单已经删除
+    INVALID_INVESTORIDORPASSWORD = 48; //CTP:无效的投资者或者密码
+    INVALID_LOGIN_IPADDRESS = 49; //CTP:不合法的登录IP地址
+    OVER_CLOSETODAY_POSITION = 50; //CTP:平今仓位不足
+    OVER_CLOSEYESTERDAY_POSITION = 51; //CTP:平昨仓位不足
+    BROKER_NOT_ENOUGH_CONDORDER = 52; //CTP:经纪公司没有足够可用的条件单数量
+    INVESTOR_NOT_ENOUGH_CONDORDER = 53; //CTP:投资者没有足够可用的条件单数量
+    BROKER_NOT_SUPPORT_CONDORDER = 54; //CTP:经纪公司不支持条件单
+    RESEND_ORDER_BROKERINVESTOR_NOTMATCH = 55; //CTP:重发未知单经济公司/投资者不匹配
+    SYC_OTP_FAILED = 56; //CTP:同步动态令牌失败
+    OTP_MISMATCH = 57; //CTP:动态令牌校验错误
+    OTPPARAM_NOT_FOUND = 58; //CTP:找不到动态令牌配置信息
+    UNSUPPORTED_OTPTYPE = 59; //CTP:不支持的动态令牌类型
+    SINGLEUSERSESSION_EXCEED_LIMIT = 60; //CTP:用户在线会话超出上限
+    EXCHANGE_UNSUPPORTED_ARBITRAGE = 61; //CTP:该交易所不支持套利类型报单
+    NO_CONDITIONAL_ORDER_RIGHT = 62; //CTP:没有条件单交易权限
+    AUTH_FAILED = 63; //CTP:客户端认证失败
+    NOT_AUTHENT = 64; //CTP:客户端未认证
+    SWAPORDER_UNSUPPORTED = 65; //CTP:该合约不支持互换类型报单
+    OPTIONS_ONLY_SUPPORT_SPEC = 66; //CTP:该期权合约只支持投机类型报单
+    DUPLICATE_EXECORDER_REF = 67; //CTP:执行宣告错误，不允许重复执行
+    RESEND_EXECORDER_BROKERINVESTOR_NOTMATCH = 68; //CTP:重发未知执行宣告经纪公司/投资者不匹配
+    EXECORDER_NOTOPTIONS = 69; //CTP:只有期权合约可执行
+    OPTIONS_NOT_SUPPORT_EXEC = 70; //CTP:该期权合约不支持执行
+    BAD_EXECORDER_ACTION_FIELD = 71; //CTP:执行宣告字段有误
+    DUPLICATE_EXECORDER_ACTION_REF = 72; //CTP:执行宣告撤单已报送，不允许重复撤单
+    EXECORDER_NOT_FOUND = 73; //CTP:执行宣告撤单找不到相应执行宣告
+    OVER_EXECUTE_POSITION = 74; //CTP:执行仓位不足
+    LOGIN_FORBIDDEN = 75; //CTP:连续登录失败次数超限，登录被禁止
+    INVALID_TRANSFER_AGENT = 76; //CTP:非法银期代理关系
+    NO_FOUND_FUNCTION = 77; //CTP:无此功能
+    SEND_EXCHANGEORDER_FAILED = 78; //CTP:发送报单失败
+    SEND_EXCHANGEORDERACTION_FAILED = 79; //CTP:发送报单操作失败
+    PRICETYPE_NOTSUPPORT_BYEXCHANGE = 80; //CTP:交易所不支持的价格类型
+    BAD_EXECUTE_TYPE = 81; //CTP:错误的执行类型
+    BAD_OPTION_INSTR = 82; //CTP:无效的组合合约
+    INSTR_NOTSUPPORT_FORQUOTE = 83; //CTP:该合约不支持询价
+    RESEND_QUOTE_BROKERINVESTOR_NOTMATCH = 84; //CTP:重发未知报价经纪公司/投资者不匹配
+    INSTR_NOTSUPPORT_QUOTE = 85; //CTP:该合约不支持报价
+    QUOTE_NOT_FOUND = 86; //CTP:报价撤单找不到相应报价
+    OPTIONS_NOT_SUPPORT_ABANDON = 87; //CTP:该期权合约不支持放弃执行
+    COMBOPTIONS_SUPPORT_IOC_ONLY = 88; //CTP:该组合期权合约只支持IOC
+    OPEN_FILE_FAILED = 89; //CTP:打开文件失败
+    NEED_RETRY = 90; //CTP：查询未就绪，请稍后重试
+    EXCHANGE_RTNERROR = 91; //CTP：交易所返回的错误
+    QUOTE_DERIVEDORDER_ACTIONERROR = 92; //CTP:报价衍生单要等待交易所返回才能撤单
+    INSTRUMENTMAP_NOT_FOUND = 93; //CTP:找不到组合合约映射
+    //灾备系统错误代码
+    NO_TRADING_RIGHT_IN_SEPC_DR = 101; //CTP:用户在本系统没有报单权限
+    NO_DR_NO = 102; //CTP:系统缺少灾备标示号
+    //转帐系统错误代码
+    SEND_INSTITUTION_CODE_ERROR = 1000; //CTP:银期转账：发送机构代码错误
+    NO_GET_PLATFORM_SN = 1001; //CTP:银期转账：取平台流水号错误
+    ILLEGAL_TRANSFER_BANK = 1002; //CTP:银期转账：不合法的转账银行
+    ALREADY_OPEN_ACCOUNT = 1003; //CTP:银期转账：已经开户
+    NOT_OPEN_ACCOUNT = 1004; //CTP:银期转账：未开户
+    PROCESSING = 1005; //CTP:银期转账：处理中
+    OVERTIME = 1006; //CTP:银期转账：交易超时
+    RECORD_NOT_FOUND = 1007; //CTP:银期转账：找不到记录
+    NO_FOUND_REVERSAL_ORIGINAL_TRANSACTION = 1008; //CTP:银期转账：找不到被冲正的原始交易
+    CONNECT_HOST_FAILED = 1009; //CTP:银期转账：连接主机失败
+    SEND_FAILED = 1010; //CTP:银期转账：发送失败
+    LATE_RESPONSE = 1011; //CTP:银期转账：迟到应答
+    REVERSAL_BANKID_NOT_MATCH = 1012; //CTP:银期转账：冲正交易银行代码错误
+    REVERSAL_BANKACCOUNT_NOT_MATCH = 1013; //CTP:银期转账：冲正交易银行账户错误
+    REVERSAL_BROKERID_NOT_MATCH = 1014; //CTP:银期转账：冲正交易经纪公司代码错误
+    REVERSAL_ACCOUNTID_NOT_MATCH = 1015; //CTP:银期转账：冲正交易资金账户错误
+    REVERSAL_AMOUNT_NOT_MATCH = 1016; //CTP:银期转账：冲正交易交易金额错误
+    DB_OPERATION_FAILED = 1017; //CTP:银期转账：数据库操作错误
+    SEND_ASP_FAILURE = 1018; //CTP:银期转账：发送到交易系统失败
+    NOT_SIGNIN = 1019; //CTP:银期转账：没有签到
+    ALREADY_SIGNIN = 1020; //CTP:银期转账：已经签到
+    AMOUNT_OR_TIMES_OVER = 1021; //CTP:银期转账：金额或次数超限
+    NOT_IN_TRANSFER_TIME = 1022; //CTP:银期转账：这一时间段不能转账
+    BANK_SERVER_ERROR = 1023; //银行主机错
+    BANK_SERIAL_IS_REPEALED = 1024; //CTP:银期转账：银行已经冲正
+    BANK_SERIAL_NOT_EXIST = 1025; //CTP:银期转账：银行流水不存在
+    NOT_ORGAN_MAP = 1026; //CTP:银期转账：机构没有签约
+    EXIST_TRANSFER = 1027; //CTP:银期转账：存在转账，不能销户
+    BANK_FORBID_REVERSAL = 1028; //CTP:银期转账：银行不支持冲正
+    DUP_BANK_SERIAL = 1029; //CTP:银期转账：重复的银行流水
+    FBT_SYSTEM_BUSY = 1030; //CTP:银期转账：转账系统忙，稍后再试
+    MACKEY_SYNCING = 1031; //CTP:银期转账：MAC密钥正在同步
+    ACCOUNTID_ALREADY_REGISTER = 1032; //CTP:银期转账：资金账户已经登记
+    BANKACCOUNT_ALREADY_REGISTER = 1033; //CTP:银期转账：银行账户已经登记
+    DUP_BANK_SERIAL_REDO_OK = 1034; //CTP:银期转账：重复的银行流水,重发成功
+    CURRENCYID_NOT_SUPPORTED = 1035; //CTP:银期转账：该币种代码不支持
+    INVALID_MAC = 1036; //CTP:银期转账：MAC值验证失败
+    NOT_SUPPORT_SECAGENT_BY_BANK = 1037; //CTP:银期转账：不支持银行端发起的二级代理商转账和查询
+    PINKEY_SYNCING = 1038; //CTP:银期转账：PIN密钥正在同步
+    SECAGENT_QUERY_BY_CCB = 1039; //CTP:银期转账：建行发起的二级代理商查询
+    //add for transfer begin -->
+    NO_VALID_BANKOFFER_AVAILABLE = 2000; //CTP:该报盘未连接到银行
+    PASSWORD_MISMATCH = 2001; //CTP:资金密码错误
+    DUPLATION_BANK_SERIAL = 2004; //CTP:银行流水号重复
+    DUPLATION_OFFER_SERIAL = 2005; //CTP:报盘流水号重复
+    SERIAL_NOT_EXSIT = 2006; //CTP:被冲正流水不存在(冲正交易)
+    SERIAL_IS_REPEALED = 2007; //CTP:原流水已冲正(冲正交易)
+    SERIAL_MISMATCH = 2008; //CTP:与原流水信息不符(冲正交易)
+    IdentifiedCardNo_MISMATCH = 2009; //CTP:证件号码或类型错误
+    ACCOUNT_NOT_FUND = 2011; //CTP:资金账户不存在
+    ACCOUNT_NOT_ACTIVE = 2012; //CTP:资金账户已经销户
+    NOT_ALLOW_REPEAL_BYMANUAL = 2013; //CTP:该交易不能执行手工冲正
+    AMOUNT_OUTOFTHEWAY = 2014; //CTP:转帐金额错误
+    EXCHANGERATE_NOT_FOUND = 2015; //CTP:找不到汇率
+    WAITING_OFFER_RSP = 999999; //CTP:等待银期报盘处理结果
+    //add for transfer end
+    //换汇系统错误代码 bgn
+    FBE_NO_GET_PLATFORM_SN = 3001; //CTP:银期换汇：取平台流水号错误
+    FBE_ILLEGAL_TRANSFER_BANK = 3002; //CTP:银期换汇：不合法的转账银行
+    FBE_PROCESSING = 3005; //CTP:银期换汇：处理中
+    FBE_OVERTIME = 3006; //CTP:银期换汇：交易超时
+    FBE_RECORD_NOT_FOUND = 3007; //CTP:银期换汇：找不到记录
+    FBE_CONNECT_HOST_FAILED = 3009; //CTP:银期换汇：连接主机失败
+    FBE_SEND_FAILED = 3010; //CTP:银期换汇：发送失败
+    FBE_LATE_RESPONSE = 3011; //CTP:银期换汇：迟到应答
+    FBE_DB_OPERATION_FAILED = 3017; //CTP:银期换汇：数据库操作错误
+    FBE_NOT_SIGNIN = 3019; //CTP:银期换汇：没有签到
+    FBE_ALREADY_SIGNIN = 3020; //CTP:银期换汇：已经签到
+    FBE_AMOUNT_OR_TIMES_OVER = 3021; //CTP:银期换汇：金额或次数超限
+    FBE_NOT_IN_TRANSFER_TIME = 3022; //CTP:银期换汇：这一时间段不能换汇
+    FBE_BANK_SERVER_ERROR = 3023; //CTP:银期换汇：银行主机错
+    FBE_NOT_ORGAN_MAP = 3026; //CTP:银期换汇：机构没有签约
+    FBE_SYSTEM_BUSY = 3030; //CTP:银期换汇：换汇系统忙，稍后再试
+    FBE_CURRENCYID_NOT_SUPPORTED = 3035; //CTP:银期换汇：该币种代码不支持
+    FBE_WRONG_BANK_ACCOUNT = 3036; //CTP:银期换汇：银行帐号不正确
+    FBE_BANK_ACCOUNT_NO_FUNDS = 3037; //CTP:银期换汇：银行帐户余额不足
+    FBE_DUP_CERT_NO = 3038; //CTP:银期换汇：凭证号重复
+}
+
+enum DISCONNECT_REASON{
+    CONNECT = 0 ;
+    UNKNOWN_REASON = 1 ;
+    LOGOUT_REASON = 2 ;
+    READING_FAIL = 4097 ;
+    WRITING_FAIL = 4098;
+    HEARTBEAT_TIMEOUT = 8193;
+    HEARTBEAT_SEND_TIMEOUT = 8194;
+    RECEIVE_ERROR = 819;
+}
+
+enum REQ_CODE{
+    OK = 0 ;
+    QUEUEING = 1 ;
+
+    NETFAIL = 11 ;
+    EXCEED_PENDING_QUOTA = 12;
+    EXCEED_REQ_FREQUENCY = 13;
+
+    NOT_INIT = 100;
+}
+
+enum REQ_TYPE{
+    UNKNOWN = 0;
+    LOGIN = 1;
+    LOGOUT = 2;
+    PRICE = 3;
+    ORDER = 4;
+    QUERY = 5;
+    ACCOUNT = 6;
+}
+
+//时间戳
+message ProcessTimeStamp
+{
+    uint64 createUTC = 1;
+    uint64 submitUTC = 2;
+    uint64 responseUTC = 3;
+}
+
+message Respond
+{
+    CTPRespCode respondError = 1;
+    string respondMsg = 2;
+}
+
+//登录参数
+message LoginParam{
+    string broker = 1 ;
+
+    string user = 2 ;
+
+    string password = 3 ;
+}
+
+message PriceRequestParam{
+    bool inSubscribe = 1 ;
+
+    string symbol = 2 ;
+
+}
+
+message SettleInfoParam
+{
+    string broker = 1;
+
+    string user = 2;
+
+    string settleDay = 3;
+}
+
+message TradingAccountParam{
+    string broker = 1 ;
+
+    string user = 2 ;
+
+    string currency = 3 ;
+
+}
+
+message UserLoginResult
+{
+    ///交易日
+    string TradingDay = 1;
+    ///登录成功时间
+    string LoginTime = 2;
+    ///经纪公司代码
+    string BrokerID = 3;
+    ///用户代码
+    string UserID = 4;
+    ///交易系统名称
+    string SystemName = 5;
+    ///前置编号
+    int32 FrontID = 6;
+    ///会话编号
+    int32 SessionID = 7;
+    ///最大报单引用
+    string MaxOrderRef = 8;
+    ///上期所时间
+    string SHFETime = 9;
+    ///大商所时间
+    string DCETime = 10;
+    ///郑商所时间
+    string CZCETime = 11;
+    ///中金所时间
+    string FFEXTime = 12;
+    ///能源中心时间
+    string INETime = 13;
+};
